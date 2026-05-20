@@ -18,7 +18,12 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/ml-explore/mlx-swift", exact: "0.30.2"),
     // .package(url: "https://github.com/mlalma/eSpeakNGSwift", from: "1.0.1"),
-    .package(url: "https://github.com/mlalma/MisakiSwift", exact: "1.0.6"),
+    // Forked from mlalma/MisakiSwift to fix the SPM nested-bundle codesign
+    // bug ("../../Resources/" → Xcode 26.3 codesign rejects "bundle format
+    // unrecognized"). Branch fix/spm-resources-bundle-codesign relocates
+    // Resources/ to the standard Sources/MisakiSwift/Resources/ layout
+    // and switches .copy → .process. Original 1.0.6 content otherwise.
+    .package(url: "https://github.com/mikaelhatanpaa/MisakiSwift", branch: "fix/spm-resources-bundle-codesign"),
     .package(url: "https://github.com/mlalma/MLXUtilsLibrary.git", exact: "0.0.6")
   ],
   targets: [
@@ -34,7 +39,7 @@ let package = Package(
         .product(name: "MLXUtilsLibrary", package: "MLXUtilsLibrary")
       ],
       resources: [
-       .copy("../../Resources/")
+       .process("Resources")
       ]
     ),
     .testTarget(
